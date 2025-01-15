@@ -1,4 +1,5 @@
 ﻿using WorkWay.Fanout;
+using WorkWay.Routing;
 using WorkWay.WorkQueues;
 
 while (true)
@@ -6,6 +7,7 @@ while (true)
     Console.WriteLine("请选择运行示例程序程序：");
     Console.WriteLine("1. Work Queues");
     Console.WriteLine("2. Publish/Subscribe");
+    Console.WriteLine("3. Routing");
     var read = Console.ReadLine();
 
     if (int.TryParse(read, out var r))
@@ -40,6 +42,21 @@ while (true)
                         consumer2.Read(nameof(consumer2));
                     });
                     FanoutProducer.Send();
+                    break;
+                }
+                case 3:
+                {
+                    _ = Task.Run(() =>
+                    {
+                        var consumer1 = new RoutingConsumer(RoutingProducer.Queue1Name);
+                        consumer1.Read(nameof(consumer1));
+                    });
+                    _ = Task.Run(() =>
+                    {
+                        var consumer2 = new RoutingConsumer(RoutingProducer.Queue2Name);
+                        consumer2.Read(nameof(consumer2));
+                    });
+                    RoutingProducer.Send();
                     break;
                 }
             default:
